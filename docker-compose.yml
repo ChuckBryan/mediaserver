@@ -180,17 +180,18 @@ services:
       - "${USERDIR}/data:/data"
       - "/etc/localtime:/etc/localtime:ro"
       - "${DOCKERDIR}/mediaserver/shared:/shared"
-  xteve: 
-    container_name: xteve
-    environment: 
+   xteve: 
+     container_name: xteve
+     environment: 
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "TZ=${TZ}"
-   image: "bl0m1/xtevedocker:latest"
+    image: "bl0m1/xtevedocker:latest"
     networks: 
-     - t2_proxy
+      - t2_proxy
     ports: 
       - "${XTEVE_PORT1}:34400"
       - "${XTEVE_PORT2}:1900"
     volumes: 
       - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
+
