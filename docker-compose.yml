@@ -63,9 +63,7 @@ services:
       - ${DOCKERDIR}/mediaserver/jellyfin:/config
       - ${USERDIR}/data/media/tv:/data/tvshows
       - ${USERDIR}/data/media/movies:/data/movies
-      - ${USERDIR}/data/media/recordings:/data/
-      - ${USERDIR}/data/media/recordings_movies:/data/
-      - ${USERDIR}/data/media/recordings_tv:/data/
+      - ${USERDIR}/data/media/:/data/
     ports:
       - "9019:8096" #Http webUI.
       #- "${JELLYFIN_PORT2}:7359/udp" # Allows clients to discover Jellyfin on the local network.
