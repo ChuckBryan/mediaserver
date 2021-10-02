@@ -180,9 +180,9 @@ services:
       - "${USERDIR}/data:/data"
       - "/etc/localtime:/etc/localtime:ro"
       - "${DOCKERDIR}/mediaserver/shared:/shared"
-   xteve: 
-     container_name: xteve
-     environment: 
+  xteve: 
+    container_name: xteve
+    environment: 
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "TZ=${TZ}"
@@ -194,4 +194,3 @@ services:
       - "${XTEVE_PORT2}:1900"
     volumes: 
       - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
-
