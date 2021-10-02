@@ -103,6 +103,8 @@ services:
       - "${PIA_PORT}:9091"
       - "${DELUGE_PORT1}:8112"
       - "${DELUGE_PORT2}:6881"
+      - "${XTEVE_PORT1}:34400"
+      - "${XTEVE_PORT2}:1900"      
     restart: always
   plexms: 
     container_name: plexms
@@ -180,6 +182,20 @@ services:
       - "${USERDIR}/data:/data"
       - "/etc/localtime:/etc/localtime:ro"
       - "${DOCKERDIR}/mediaserver/shared:/shared"
+#  xteve: 
+#    container_name: xteve
+#    environment: 
+#      - "PUID=${PUID}"
+#      - "PGID=${PGID}"
+#      - "TZ=${TZ}"
+#   image: "bl0m1/xtevedocker:latest"
+#    networks: 
+#     - t2_proxy
+#    ports: 
+#      - "${XTEVE_PORT1}:34400"
+#     - "${XTEVE_PORT2}:1900"
+#    volumes: 
+#      - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
   xteve: 
     container_name: xteve
     environment: 
@@ -187,12 +203,8 @@ services:
       - "PGID=${PGID}"
       - "TZ=${TZ}"
     image: "bl0m1/xtevedocker:latest"
- #   image: "brycelarge/xteve-docker"
- #   network_mode: host
-    networks: 
-     - t2_proxy
-    ports: 
-      - "${XTEVE_PORT1}:34400"
-      - "${XTEVE_PORT2}:1900"
+    depends_on: 
+      - pia-vpn    
+    network_mode: "service:pia-vpn"
     volumes: 
       - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
