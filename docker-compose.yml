@@ -66,7 +66,7 @@ services:
     ports:
       - "9019:8096" #Http webUI.
     devices:
-      - /dev/dri:/dev/dri #Only needed if you want to use your Intel GPU for hardware accelerated video encoding (vaapi).
+      - /dev/dri:/dev/dri
     restart: unless-stopped  
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:develop
@@ -94,15 +94,15 @@ services:
       REGION: "US East"
       USERNAME: "${PIA_USERNAME}"
     image: "itsdaspecialk/pia-openvpn:centos7"
-#    network_mode: host
+#    network_mode: host #WHEN I DID THIS IT CRASHED PORTAINER
     networks:
      - t2_proxy
     ports: 
       - "${PIA_PORT}:9091"
       - "${DELUGE_PORT1}:8112"
       - "${DELUGE_PORT2}:6881"
-      - "${XTEVE_PORT1}:34400"
-      - "${XTEVE_PORT2}:1900"      
+      #- "${XTEVE_PORT1}:34400"
+      #- "${XTEVE_PORT2}:1900"      
     restart: always
   plexms: 
     container_name: plexms
@@ -180,29 +180,29 @@ services:
       - "${USERDIR}/data:/data"
       - "/etc/localtime:/etc/localtime:ro"
       - "${DOCKERDIR}/mediaserver/shared:/shared"
-#  xteve: 
-#    container_name: xteve
-#    environment: 
-#      - "PUID=${PUID}"
-#      - "PGID=${PGID}"
-#      - "TZ=${TZ}"
-#   image: "bl0m1/xtevedocker:latest"
-#    networks: 
-#     - t2_proxy
-#    ports: 
-#      - "${XTEVE_PORT1}:34400"
-#     - "${XTEVE_PORT2}:1900"
-#    volumes: 
-#      - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
   xteve: 
     container_name: xteve
     environment: 
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "TZ=${TZ}"
-    image: "bl0m1/xtevedocker:latest"
-    depends_on: 
-      - pia-vpn    
-    network_mode: "service:pia-vpn"
+   image: "bl0m1/xtevedocker:latest"
+    networks: 
+     - t2_proxy
+    ports: 
+      - "${XTEVE_PORT1}:34400"
+      - "${XTEVE_PORT2}:1900"
     volumes: 
       - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
+#  xteve: 
+#    container_name: xteve
+#    environment: 
+#      - "PUID=${PUID}"
+#      - "PGID=${PGID}"
+#      - "TZ=${TZ}"
+#    image: "bl0m1/xtevedocker:latest"
+#    depends_on: 
+#      - pia-vpn    
+#    network_mode: "service:pia-vpn"
+#    volumes: 
+#      - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
