@@ -194,15 +194,3 @@ services:
       - "${XTEVE_PORT2}:1900"
     volumes: 
       - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
-#  xteve: 
-#    container_name: xteve
-#    environment: 
-#      - "PUID=${PUID}"
-#      - "PGID=${PGID}"
-#      - "TZ=${TZ}"
-#    image: "bl0m1/xtevedocker:latest"
-#    depends_on: 
-#      - pia-vpn    
-#    network_mode: "service:pia-vpn"
-#    volumes: 
-#      - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
