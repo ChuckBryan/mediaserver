@@ -65,7 +65,6 @@ services:
       - ${USERDIR}/data/media/:/data/
     ports:
       - "9019:8096" #Http webUI.
-      #- "${JELLYFIN_PORT2}:7359/udp" # Allows clients to discover Jellyfin on the local network.
       #- "${JELLYFIN_PORT3}:1900/udp" #Service discovery used by DNLA and clients.
     devices:
       - /dev/dri:/dev/dri #Only needed if you want to use your Intel GPU for hardware accelerated video encoding (vaapi).
