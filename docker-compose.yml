@@ -57,8 +57,7 @@ services:
       - "PGID=${PGID}"
       - "TZ=${TZ}"
       #- JELLYFIN_PublishedServerUrl=192.168.0.5 #Set the autodiscovery response domain or IP address.
-    networks: 
-      - t2_proxy
+    network_mode: host
     volumes:
       - ${DOCKERDIR}/mediaserver/jellyfin:/config
       - ${USERDIR}/data/media/tv:/data/tvshows
