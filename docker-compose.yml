@@ -1,8 +1,4 @@
 version: "3.9"
-networks: 
-  t2_proxy: 
-    driver: bridge
-    name: t2_proxy
 services: 
   organizr:
     image: organizr/organizr
@@ -11,8 +7,6 @@ services:
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "TZ=${TZ}"
-    networks: 
-      - t2_proxy
     volumes:
       - "${DOCKERDIR}/mediaserver/organizer:/config"
     ports:
@@ -25,8 +19,6 @@ services:
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "TZ=${TZ}"
-    networks: 
-      - t2_proxy
     volumes:
       - ${DOCKERDIR}/mediaserver/readarr:/config
       - ${USERDIR}/data/media/books:/books #optional
@@ -75,8 +67,6 @@ services:
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "TZ=${TZ}"
-    networks: 
-      - t2_proxy  
     volumes:
        - "${DOCKERDIR}/mediaserver/prowlarr:/config"
     ports:
@@ -94,9 +84,6 @@ services:
       REGION: "US East"
       USERNAME: "${PIA_USERNAME}"
     image: "itsdaspecialk/pia-openvpn:centos7"
-#    network_mode: host #WHEN I DID THIS IT CRASHED PORTAINER
-    networks:
-     - t2_proxy
     ports: 
       - "${PIA_PORT}:9091"
       - "${DELUGE_PORT1}:8112"
@@ -131,8 +118,6 @@ services:
       - "PGID=${PGID}"
       - "TZ=${TZ}"
     image: "linuxserver/radarr:latest"
-    networks: 
-      - t2_proxy
     ports: 
       - "$RADARR_PORT:7878"
     restart: always
@@ -150,8 +135,6 @@ services:
       - "PGID=${PGID}"
       - "TZ=${TZ}"
     image: linuxserver/sabnzbd
-    networks: 
-      - t2_proxy
     ports: 
       - "$SABDNZD_PORT:8080"
     restart: always
@@ -168,8 +151,6 @@ services:
       - "PGID=${PGID}"
       - "TZ=${TZ}"
     image: "linuxserver/sonarr:latest"
-    networks: 
-      - t2_proxy
     ports: 
       - "${SONARR_PORT}:8989"
     restart: always
@@ -186,8 +167,9 @@ services:
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "TZ=${TZ}"
-    image: "brycelarge/xteve-docker"
-    network_mode: bridge
+    image: "bl0m1/xtevedocker:latest"
     ports: 
       - "${XTEVE_PORT1}:34400"
       - "${XTEVE_PORT2}:1900"
+    volumes: 
+      - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
