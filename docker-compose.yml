@@ -186,11 +186,8 @@ services:
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "TZ=${TZ}"
-    image: "bl0m1/xtevedocker:latest"
-    networks: 
-      - t2_proxy
+    image: "brycelarge/xteve-docker"
+    network_mode: bridge
     ports: 
       - "${XTEVE_PORT1}:34400"
       - "${XTEVE_PORT2}:1900"
-    volumes: 
-      - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
