@@ -21,7 +21,7 @@ services:
       - "TZ=${TZ}"
     volumes:
       - ${DOCKERDIR}/mediaserver/readarr:/config
-      - ${USERDIR}/data/media/books:/books #optional
+#      - ${USERDIR}/data/media/books:/books #optional
 #      - /path/to/downloadclient-downloads:/downloads #optional
     ports:
       - ${READARR_PORT}:8787
