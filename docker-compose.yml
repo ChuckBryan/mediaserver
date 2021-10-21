@@ -22,7 +22,7 @@ services:
     volumes:
       - ${DOCKERDIR}/mediaserver/readarr:/config
 #      - ${USERDIR}/data/media/books:/books #optional
-#      - /path/to/downloadclient-downloads:/downloads #optional
+      - ${USERDIR}/data:/downloads #optional
     ports:
       - ${READARR_PORT}:8787
     restart: unless-stopped    
