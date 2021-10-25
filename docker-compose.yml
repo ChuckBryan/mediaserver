@@ -21,8 +21,9 @@ services:
       - "TZ=${TZ}"
     volumes:
       - ${DOCKERDIR}/mediaserver/readarr:/config
+      - ${USERDIR}/data:/data
 #      - ${USERDIR}/data/media/books:/books #optional
-      - ${USERDIR}/data:/downloads #optional
+      #- ${USERDIR}/data:/downloads #optional
     ports:
       - ${READARR_PORT}:8787
     restart: unless-stopped    
