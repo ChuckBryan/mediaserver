@@ -21,6 +21,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${DOCKERDIR}/mediaserver/calibre:/config
+      - "${USERDIR}/data/media/books:/Calibre Library"
     ports:
       - ${CALIBRE_PORT1}:8080
       - ${CALIBRE_PORT2}:8081
