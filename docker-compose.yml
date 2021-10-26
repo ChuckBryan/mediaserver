@@ -20,7 +20,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${DOCKERDIR}/mediaserver/Calibre:/config
+      - ${DOCKERDIR}/mediaserver/calibre:/config
     ports:
       - ${CALIBRE_PORT1}:8080
       - ${CALIBRE_PORT2}:8081
