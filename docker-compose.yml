@@ -24,7 +24,7 @@ services:
       - UMASK=002
     volumes:
       - ${DOCKERDIR}/mediaserver/calibre:/config
-      - ${USERDIR}/data/books:/books    
+      - ${USERDIR}/data/media/books:/books    
   readarr:
     image: linuxserver/readarr:nightly
     container_name: readarr
