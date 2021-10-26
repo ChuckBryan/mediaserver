@@ -12,6 +12,19 @@ services:
     ports:
       - ${ORGANIZER_PORT}:80
     restart: unless-stopped
+  calibre:
+    container_name: calibre
+    image: ta264/docker-calibre
+    ports:
+      - ${CALIBRE_PORT}:8081
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK=002
+    volumes:
+      - ${DOCKERDIR}/mediaserver/calibre:/config
+      - ${USERDIR}/data/books:/books    
   readarr:
     image: linuxserver/readarr:nightly
     container_name: readarr
