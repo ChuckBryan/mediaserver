@@ -12,6 +12,19 @@ services:
     ports:
       - ${ORGANIZER_PORT}:80
     restart: unless-stopped
+  calibre:
+    image: lscr.io/linuxserver/calibre
+    container_name: calibre
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DOCKERDIR}/mediaserver/Calibre:/config
+    ports:
+      - ${CALIBRE_PORT1}:8080
+      - ${CALIBRE_PORT2}:8081
+    restart: unless-stopped    
   readarr:
     image: linuxserver/readarr:nightly
     container_name: readarr
