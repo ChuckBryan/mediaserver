@@ -1,17 +1,5 @@
 version: "3.9"
 services: 
-  organizr:
-    image: organizr/organizr
-    container_name: organizr
-    environment:
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "TZ=${TZ}"
-    volumes:
-      - "${DOCKERDIR}/mediaserver/organizer:/config"
-    ports:
-      - ${ORGANIZER_PORT}:80
-    restart: unless-stopped
   calibre:
     container_name: calibre
     image: ta264/docker-calibre
@@ -55,25 +43,6 @@ services:
     volumes: 
       - "${DOCKERDIR}/mediaserver/deluge:/config"
       - "${USERDIR}/data/torrents:/downloads"
-  jellyfin:
-    image: ghcr.io/linuxserver/jellyfin
-    container_name: jellyfin
-    environment:
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "TZ=${TZ}"
-      #- JELLYFIN_PublishedServerUrl=192.168.0.5 #Set the autodiscovery response domain or IP address.
-    network_mode: host
-    volumes:
-      - ${DOCKERDIR}/mediaserver/jellyfin:/config
-      - ${USERDIR}/data/media/tv:/data/tvshows
-      - ${USERDIR}/data/media/movies:/data/movies
-      - ${USERDIR}/data/media/:/data/
-    ports:
-      - "9019:8096" #Http webUI.
-    devices:
-      - /dev/dri:/dev/dri
-    restart: unless-stopped  
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
