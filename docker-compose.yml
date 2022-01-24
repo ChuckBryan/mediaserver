@@ -128,3 +128,4 @@ services:
       - "${XTEVE_PORT2}:1900"
     volumes: 
       - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
+
