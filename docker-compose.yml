@@ -1,33 +1,5 @@
 version: "3.9"
 services: 
-  calibre:
-    container_name: calibre
-    image: ta264/docker-calibre
-    ports:
-      - ${CALIBRE_PORT}:8081
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - UMASK=002
-    volumes:
-      - ${DOCKERDIR}/mediaserver/calibre:/config
-      - ${USERDIR}/data/media/books:/books    
-  readarr:
-    image: linuxserver/readarr:nightly
-    container_name: readarr
-    environment:
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "TZ=${TZ}"
-    volumes:
-      - ${DOCKERDIR}/mediaserver/readarr:/config
-      - ${USERDIR}/data:/data
-#      - ${USERDIR}/data/media/books:/books #optional
-      #- ${USERDIR}/data:/downloads #optional
-    ports:
-      - ${READARR_PORT}:8787
-    restart: unless-stopped    
   deluge: 
     container_name: deluge
     depends_on: 
