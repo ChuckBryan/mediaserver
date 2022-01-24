@@ -8,8 +8,9 @@ services:
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "TZ=${TZ}"
-      - DELUGE_LOGLEVEL=error
-    image: adamfisher90/docker-deluge-1.3.11
+      - "DELUGE_LOGLEVEL=error"
+    #image: adamfisher90/docker-deluge-1.3.11
+    image: lscr.io/linuxserver/deluge
     network_mode: "service:pia-vpn"
     restart: unless-stopped
     volumes: 
