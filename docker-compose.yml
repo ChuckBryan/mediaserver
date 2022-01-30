@@ -32,9 +32,9 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
-      - 8888:8888/tcp # HTTP proxy
-      - 8388:8388/tcp # Shadowsocks
-      - 8388:8388/udp # Shadowsocks
+      - ${GLUETON_PORT1}:8888/tcp # HTTP proxy
+      - ${GLUETON_PORT2}:8388/tcp # Shadowsocks
+      - ${GLUETON_PORT3}:8388/udp # Shadowsocks
       - "${DELUGE_PORT1}:8112"
       - "${DELUGE_PORT2}:6881"
     volumes:
