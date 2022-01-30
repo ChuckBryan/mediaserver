@@ -39,7 +39,7 @@ services:
        - "${DOCKERDIR}/mediaserver/piavpn/strong:/strong"
     environment: 
       PASSWORD: "${PIA_PASSWORD}"
-      REGION: "US Atlanta"
+      #REGION: "US Atlanta"
       USERNAME: "${PIA_USERNAME}"
     image: "itsdaspecialk/pia-openvpn:centos7"
     ports: 
