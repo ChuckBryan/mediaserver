@@ -36,7 +36,7 @@ services:
       - "209.222.18.218"
     environment: 
       PASSWORD: "${PIA_PASSWORD}"
-      REGION: "US East"
+      REGION: "us_east"
       USERNAME: "${PIA_USERNAME}"
     image: "itsdaspecialk/pia-openvpn:centos7"
     ports: 
