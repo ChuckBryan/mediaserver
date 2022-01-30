@@ -3,14 +3,14 @@ services:
   deluge: 
     container_name: deluge
     depends_on: 
-      - pia-vpn
+      - gluetun
     environment: 
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "TZ=${TZ}"
       - "DELUGE_LOGLEVEL=error"
     image: lscr.io/linuxserver/deluge
-    network_mode: "service:pia-vpn"
+    network_mode: "service:gluetun"
     restart: unless-stopped
     volumes: 
       - "${DOCKERDIR}/mediaserver/deluge:/config"
@@ -27,28 +27,45 @@ services:
     ports:
       - "${PROWLARR_PORT}:9696"
     restart: unless-stopped
-  pia-vpn: 
-    cap_add: 
-      - net_admin
-    container_name: pia-vpn
-    dns: 
-      - "209.222.18.222"
-      - "209.222.18.218"
-    volumes:
-       - "${DOCKERDIR}/mediaserver/piavpn/normal:/normal"
-       - "${DOCKERDIR}/mediaserver/piavpn/strong:/strong"
-    environment: 
-      PASSWORD: "${PIA_PASSWORD}"
-      #REGION: "US Atlanta"
-      USERNAME: "${PIA_USERNAME}"
-    image: "itsdaspecialk/pia-openvpn:centos7"
-    ports: 
-      - "${PIA_PORT}:9091"
+  gluetun:
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
       - "${DELUGE_PORT1}:8112"
       - "${DELUGE_PORT2}:6881"
+    volumes:
+      - ${DOCKERDIR}/mediaserver:/gluetun
+    environment:
+      - VPNSP=private internet access
+      - OPENVPN_USER=${PIA_USERNAME}
+      - OPENVPN_PASSWORD=${PIA_PASSWORD}
+      - REGION=Netherlands    
+#  pia-vpn: 
+#    cap_add: 
+#      - net_admin
+#    container_name: pia-vpn
+#    dns: 
+#      - "209.222.18.222"
+#      - "209.222.18.218"
+#    volumes:
+#       - "${DOCKERDIR}/mediaserver/piavpn/normal:/normal"
+#       - "${DOCKERDIR}/mediaserver/piavpn/strong:/strong"
+#    environment: 
+#      PASSWORD: "${PIA_PASSWORD}"
+      #REGION: "US Atlanta"
+#      USERNAME: "${PIA_USERNAME}"
+#    image: "itsdaspecialk/pia-openvpn:centos7"
+#    ports: 
+#      - "${PIA_PORT}:9091"
+#      - "${DELUGE_PORT1}:8112"
+#      - "${DELUGE_PORT2}:6881"
       #- "${XTEVE_PORT1}:34400"
       #- "${XTEVE_PORT2}:1900"      
-    restart: always
+ #   restart: always
   plexms: 
     container_name: plexms
     devices: 
