@@ -2,15 +2,15 @@ version: "3.9"
 services: 
   deluge: 
     container_name: deluge
+    depends_on: 
+      - pia-vpn
     environment: 
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "TZ=${TZ}"
       - "DELUGE_LOGLEVEL=error"
-    ports: 
-      - "${DELUGE_PORT1}:8112"
-      - "${DELUGE_PORT2}:6881"
     image: lscr.io/linuxserver/deluge
+    network_mode: "service:pia-vpn"
     restart: unless-stopped
     volumes: 
       - "${DOCKERDIR}/mediaserver/deluge:/config"
@@ -41,8 +41,8 @@ services:
     image: "itsdaspecialk/pia-openvpn:centos7"
     ports: 
       - "${PIA_PORT}:9091"
-      #- "${DELUGE_PORT1}:8112"
-      #- "${DELUGE_PORT2}:6881"
+      - "${DELUGE_PORT1}:8112"
+      - "${DELUGE_PORT2}:6881"
       #- "${XTEVE_PORT1}:34400"
       #- "${XTEVE_PORT2}:1900"      
     restart: always
