@@ -11,7 +11,6 @@ services:
       - "${DELUGE_PORT1}:8112"
       - "${DELUGE_PORT2}:6881"
     image: lscr.io/linuxserver/deluge
-    network_mode: "service:pia-vpn"
     restart: unless-stopped
     volumes: 
       - "${DOCKERDIR}/mediaserver/deluge:/config"
