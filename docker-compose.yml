@@ -34,6 +34,9 @@ services:
     dns: 
       - "209.222.18.222"
       - "209.222.18.218"
+    volumes:
+       - "${DOCKERDIR}/mediaserver/piavpn/normal:/normal"
+       - "${DOCKERDIR}/mediaserver/piavpn/strong:/strong"
     environment: 
       PASSWORD: "${PIA_PASSWORD}"
       REGION: "US Atlanta"
