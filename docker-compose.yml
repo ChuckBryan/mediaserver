@@ -44,7 +44,7 @@ services:
       - VPNSP=private internet access
       - OPENVPN_USER=${PIA_USERNAME}
       - OPENVPN_PASSWORD=${PIA_PASSWORD}
-      - REGION=us_east    
+      - REGION=US Streaming Optimized    
 #  pia-vpn: 
 #    cap_add: 
 #      - net_admin
