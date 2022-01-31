@@ -29,6 +29,7 @@ services:
     restart: unless-stopped
   gluetun:
     image: qmcgaw/gluetun
+    container_name: gluetun
     cap_add:
       - NET_ADMIN
     ports:
@@ -43,7 +44,7 @@ services:
       - VPNSP=private internet access
       - OPENVPN_USER=${PIA_USERNAME}
       - OPENVPN_PASSWORD=${PIA_PASSWORD}
-      - REGION=Netherlands    
+      - REGION=us_east    
 #  pia-vpn: 
 #    cap_add: 
 #      - net_admin
