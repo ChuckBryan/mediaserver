@@ -47,28 +47,6 @@ services:
       - OPENVPN_USER=${PIA_USERNAME}
       - OPENVPN_PASSWORD=${PIA_PASSWORD}
       - REGION=US Streaming Optimized    
-#  pia-vpn: 
-#    cap_add: 
-#      - net_admin
-#    container_name: pia-vpn
-#    dns: 
-#      - "209.222.18.222"
-#      - "209.222.18.218"
-#    volumes:
-#       - "${DOCKERDIR}/mediaserver/piavpn/normal:/normal"
-#       - "${DOCKERDIR}/mediaserver/piavpn/strong:/strong"
-#    environment: 
-#      PASSWORD: "${PIA_PASSWORD}"
-      #REGION: "US Atlanta"
-#      USERNAME: "${PIA_USERNAME}"
-#    image: "itsdaspecialk/pia-openvpn:centos7"
-#    ports: 
-#      - "${PIA_PORT}:9091"
-#      - "${DELUGE_PORT1}:8112"
-#      - "${DELUGE_PORT2}:6881"
-      #- "${XTEVE_PORT1}:34400"
-      #- "${XTEVE_PORT2}:1900"      
- #   restart: always
   plexms: 
     container_name: plexms
     devices: 
@@ -139,18 +117,6 @@ services:
       - "${USERDIR}/data:/data"
       - "/etc/localtime:/etc/localtime:ro"
       - "${DOCKERDIR}/mediaserver/shared:/shared"
-#  xteve: 
-#    container_name: xteve
-#    environment: 
-#      - "PUID=${PUID}"
-#      - "PGID=${PGID}"
-#      - "TZ=${TZ}"
-#    image: "bl0m1/xtevedocker:latest"
-#    ports: 
-#      - "${XTEVE_PORT1}:34400"
-#      - "${XTEVE_PORT2}:1900"
-#    volumes: 
-#      - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
   xteve: 
     container_name: xteve
     depends_on: 
