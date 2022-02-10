@@ -39,7 +39,8 @@ services:
       - "${DELUGE_PORT1}:8112"
       - "${DELUGE_PORT2}:6881"
       - "${XTEVE_PORT1}:34400"
-      - "${XTEVE_PORT2}:1900"   
+      - "${XTEVE_PORT2}:1900"
+      - "${FIREFOX_PORT}:3000"
     volumes:
       - ${DOCKERDIR}/mediaserver:/gluetun
     environment:
@@ -117,6 +118,20 @@ services:
       - "${USERDIR}/data:/data"
       - "/etc/localtime:/etc/localtime:ro"
       - "${DOCKERDIR}/mediaserver/shared:/shared"
+  firefox:
+    image: lscr.io/linuxserver/firefox
+    container_name: firefox
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - ${DOCKERDIR}/mediaserver/firefox:/config
+    shm_size: "1gb"
+    depends_on: 
+      - gluetun
+    network_mode: "service:gluetun"
+    restart: unless-stopped
   xteve: 
     container_name: xteveGuide2Go
     depends_on: 
