@@ -118,15 +118,16 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "${DOCKERDIR}/mediaserver/shared:/shared"
   xteve: 
-    container_name: xteve
+    container_name: xteveGuide2Go
     depends_on: 
       - gluetun
     network_mode: "service:gluetun"
     restart: unless-stopped
     environment: 
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
+      # - "PUID=${PUID}"
+      # - "PGID=${PGID}"
       - "TZ=${TZ}"
-    image: "bl0m1/xtevedocker:latest"
+    image: "dnsforge/xteve:latest"
     volumes: 
-      - "${DOCKERDIR}/mediaserver/xteve:/home/xteve/.xteve"
+      - "${DOCKERDIR}/mediaserver/dnsForgeXteve:/home/xteve/conf"
+      - "${DOCKERDIR}/mediaserver/guide2go:/home/xteve/guide2go/conf"
