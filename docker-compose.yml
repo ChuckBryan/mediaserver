@@ -126,9 +126,9 @@ services:
     image: lscr.io/linuxserver/firefox
     container_name: firefox
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/London
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
       - ${DOCKERDIR}/mediaserver/firefox:/config
     shm_size: "1gb"
@@ -136,6 +136,17 @@ services:
       - gluetun
     network_mode: "service:gluetun"
     restart: unless-stopped
+  komga:
+    image: gotson/komga
+    container_name: komga
+    volumes:
+      - ${DOCKERDIR}/mediaserver/komga:/config
+      - ${USERDIR}/data/comics:/data
+    ports:
+      - ${KOMGA_PORT}:8080
+    user: "${PUID}:${PGID}"
+    # remove the whole environment section if you don't need it
+    restart: unless-stopped    
   xteve: 
     container_name: xteveGuide2Go
     depends_on: 
