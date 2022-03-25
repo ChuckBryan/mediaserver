@@ -50,7 +50,7 @@ services:
       - OPENVPN_PASSWORD=${PIA_PASSWORD}
       - REGION=US Streaming Optimized    
   plexms: 
-    container_name: plexms
+    container_name: plex
     devices: 
       - "/dev/dri:/dev/dri"
     environment: 
