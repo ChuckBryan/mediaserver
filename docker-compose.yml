@@ -1,5 +1,18 @@
 version: "3.9"
 services: 
+  ombi:
+    image: lscr.io/linuxserver/ombi
+    container_name: ombi
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - BASE_URL=/ombi #optional
+    volumes:
+      - ${DOCKERDIR}/mediaserver:/config
+    ports:
+      - ${OMBI_PORT}:3579
+    restart: unless-stopped
   deluge: 
     container_name: deluge
     depends_on: 
