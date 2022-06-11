@@ -9,7 +9,7 @@ services:
       - TZ=${TZ}
       - BASE_URL=/ombi #optional
     volumes:
-      - ${DOCKERDIR}/mediaserver:/config
+      - ${DOCKERDIR}/mediaserver/ombi:/config
     ports:
       - ${OMBI_PORT}:3579
     restart: unless-stopped
