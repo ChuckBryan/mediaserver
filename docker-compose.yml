@@ -174,3 +174,19 @@ services:
     volumes: 
       - "${DOCKERDIR}/mediaserver/dnsForgeXteve:/home/xteve/conf"
       - "${DOCKERDIR}/mediaserver/guide2go:/home/xteve/guide2go/conf"
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - lidarr:/config
+      #- /path/to/music:/music #optional
+      #- /path/to/downloads:/downloads #optional
+    ports:
+      - ${LIDARR_PORT}:8686
+    restart: unless-stopped
+volumes:
+  lidarr:
