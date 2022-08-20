@@ -184,7 +184,7 @@ services:
     volumes:
       - lidarr:/config
       - "${USERDIR}/data:/downloads"
-      - "${USERDIR}/data/media/music:/music #optional
+      #- "${USERDIR}/data/media/music:/music #optional
       #- /path/to/downloads:/downloads #optional
     ports:
       - ${LIDARR_PORT}:8686
