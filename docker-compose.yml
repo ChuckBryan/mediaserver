@@ -183,7 +183,7 @@ services:
       - TZ=${TZ}
     volumes:
       - lidarr:/config
-      - "${USERDIR}/data:/downloads"
+      - "${USERDIR}/data:/data"
       #- "${USERDIR}/data/media/music:/music #optional
       #- /path/to/downloads:/downloads #optional
     ports:
