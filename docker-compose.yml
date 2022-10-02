@@ -28,6 +28,20 @@ services:
     volumes: 
       - "${DOCKERDIR}/mediaserver/deluge:/config"
       - "${USERDIR}/data/torrents:/downloads"
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - $DOCKERDIR/mediaserver/jellyfin:/config
+      - ${USERDIR}/data/media/tv:/data/tvshows
+      - ${USERDIR}/data/media/movies:/data/movies
+    ports:
+      - ${JELLYFIN_PORT}:8096
+    restart: unless-stopped
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
