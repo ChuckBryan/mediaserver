@@ -70,8 +70,8 @@ services:
       - ${GLUETON_PORT3}:8388/udp # Shadowsocks
       - "${DELUGE_PORT1}:8112"
       - "${DELUGE_PORT2}:6881"
-      - "${XTEVE_PORT1}:34400"
-      - "${XTEVE_PORT2}:1900"
+      # - "${XTEVE_PORT1}:34400"
+      # - "${XTEVE_PORT2}:1900"
       - "${FIREFOX_PORT}:3000"
       #- "${SONARR_PORT}:8989"
     volumes:
@@ -181,14 +181,17 @@ services:
     restart: unless-stopped    
   xteve: 
     container_name: xteveGuide2Go
-    depends_on: 
-      - gluetun
-    network_mode: "service:gluetun"
+    #depends_on: 
+    #  - gluetun
+    #network_mode: "service:gluetun"
     restart: unless-stopped
     environment: 
-      # - "PUID=${PUID}"
-      # - "PGID=${PGID}"
+      - "PUID=${PUID}"
+      - "PGID=${PGID}"
       - "TZ=${TZ}"
+    ports:
+      - "${XTEVE_PORT1}:34400"
+      - "${XTEVE_PORT2}:1900"
     image: "dnsforge/xteve:latest"
     volumes: 
       - "${DOCKERDIR}/mediaserver/dnsForgeXteve:/home/xteve/conf"
