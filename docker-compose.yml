@@ -29,7 +29,7 @@ services:
       - "${DOCKERDIR}/mediaserver/deluge:/config"
       - "${USERDIR}/data/torrents:/downloads"
   jellyfin:
-    image: lscr.io/linuxserver/jellyfin:bionic
+    image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
     environment:
       - "PUID=${PUID}"
