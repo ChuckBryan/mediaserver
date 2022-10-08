@@ -32,9 +32,10 @@ services:
     image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - "PUID=${PUID}"
+      - "PGID=${PGID}"
+      - "TZ=${TZ}"
+      - "JELLYFIN_PublishedServerUrl=http://${SERVER_IP}:8096"
     volumes:
       - $DOCKERDIR/mediaserver/jellyfin:/config
       - ${USERDIR}/data/media/tv:/data/tvshows
