@@ -80,7 +80,7 @@ services:
       - VPNSP=private internet access
       - OPENVPN_USER=${PIA_USERNAME}
       - OPENVPN_PASSWORD=${PIA_PASSWORD}
-      - REGION=US Streaming Optimized    
+      - REGION=US East Streaming Optimized  
   plexms: 
     container_name: plex
     devices: 
