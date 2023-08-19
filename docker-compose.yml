@@ -1,18 +1,5 @@
 version: "3.9"
 services: 
-  ombi:
-    image: lscr.io/linuxserver/ombi
-    container_name: ombi
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - BASE_URL=/ombi #optional
-    volumes:
-      - ${DOCKERDIR}/mediaserver/ombi:/config
-    ports:
-      - ${OMBI_PORT}:3579
-    restart: unless-stopped
   deluge: 
     container_name: deluge
     depends_on: 
@@ -28,25 +15,6 @@ services:
     volumes: 
       - "${DOCKERDIR}/mediaserver/deluge:/config"
       - "${USERDIR}/data/torrents:/downloads"
-  jellyfin:
-    image: lscr.io/linuxserver/jellyfin:latest
-    container_name: jellyfin
-    environment:
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "TZ=${TZ}"
-      - "JELLYFIN_PublishedServerUrl=192.168.0.5"
-      #- "JELLYFIN_PublishedServerUrl=http://${SERVER_IP}:8096"
-    volumes:
-      - $DOCKERDIR/mediaserver/jellyfin:/config
-      - ${USERDIR}/data/media/tv:/data/tvshows
-      - ${USERDIR}/data/media/movies:/data/movies
-    ports:
-      - "${JELLYFIN_PORT1}:8096/tcp"
-      - "${JELLYFIN_PORT2}:8920/tcp"
-      - "${JELLYFIN_PORT3}:7359/udp" #optional
-      - "${JELLYFIN_PORT4}:1900/udp" #optional
-    restart: unless-stopped
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
@@ -154,20 +122,6 @@ services:
       - "${USERDIR}/data:/data"
       - "/etc/localtime:/etc/localtime:ro"
       - "${DOCKERDIR}/mediaserver/shared:/shared"
-  firefox:
-    image: lscr.io/linuxserver/firefox
-    container_name: firefox
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${DOCKERDIR}/mediaserver/firefox:/config
-    shm_size: "1gb"
-    depends_on: 
-      - gluetun
-    network_mode: "service:gluetun"
-    restart: unless-stopped
   komga:
     image: gotson/komga
     container_name: komga
@@ -196,20 +150,5 @@ services:
     volumes: 
       - "${DOCKERDIR}/mediaserver/dnsForgeXteve:/home/xteve/conf"
       - "${DOCKERDIR}/mediaserver/guide2go:/home/xteve/guide2go/conf"
-  lidarr:
-    image: lscr.io/linuxserver/lidarr:latest
-    container_name: lidarr
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - lidarr:/config
-      - "${USERDIR}/data:/data"
-      #- "${USERDIR}/data/media/music:/music #optional
-      #- /path/to/downloads:/downloads #optional
-    ports:
-      - ${LIDARR_PORT}:8686
-    restart: unless-stopped
 volumes:
   lidarr:
