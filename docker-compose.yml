@@ -1,154 +1,204 @@
 version: "3.9"
+
+networks:
+  mediaplex_default:
+    name: ${DEFAULT_NETWORK}
+    driver: bridge
+
 services: 
-  deluge: 
-    container_name: deluge
-    depends_on: 
-      - gluetun
-    environment: 
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "TZ=${TZ}"
-      - "DELUGE_LOGLEVEL=error"
-    image: lscr.io/linuxserver/deluge
-    network_mode: "service:gluetun"
-    restart: unless-stopped
-    volumes: 
-      - "${DOCKERDIR}/mediaserver/deluge:/config"
-      - "${USERDIR}/data/torrents:/downloads"
-  prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:develop
-    container_name: prowlarr
-    environment:
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "TZ=${TZ}"
-    volumes:
-       - "${DOCKERDIR}/mediaserver/prowlarr:/config"
-    ports:
-      - "${PROWLARR_PORT}:9696"
-    restart: unless-stopped
   gluetun:
     image: qmcgaw/gluetun
-    container_name: gluetun
+    container_name: ${GLUETUN_CONTAINER}
     cap_add:
       - NET_ADMIN
     ports:
-      - ${GLUETON_PORT1}:8888/tcp # HTTP proxy
-      - ${GLUETON_PORT2}:8388/tcp # Shadowsocks
-      - ${GLUETON_PORT3}:8388/udp # Shadowsocks
-      - "${DELUGE_PORT1}:8112"
-      - "${DELUGE_PORT2}:6881"
-      # - "${XTEVE_PORT1}:34400"
-      # - "${XTEVE_PORT2}:1900"
-      - "${FIREFOX_PORT}:3000"
-      #- "${SONARR_PORT}:8989"
+      - "${GLUETUN_PORT1}:8888"    # HTTP proxy
+      - "${GLUETUN_PORT2}:8388"    # Shadowsocks TCP
+      - "${GLUETUN_PORT3}:8388/udp" # Shadowsocks UDP
+      - "${DELUGE_PORT1}:8112"     # Deluge Web UI
+      - "${DELUGE_PORT2}:6881"     # Deluge torrents
+      - "${FIREFOX_PORT}:3000"     # Firefox/browser
     volumes:
       - ${DOCKERDIR}/mediaserver:/gluetun
     environment:
-      - VPNSP=private internet access
-      - OPENVPN_USER=${PIA_USERNAME}
-      - OPENVPN_PASSWORD=${PIA_PASSWORD}
-      - REGION=US East Streaming Optimized  
-  plexms: 
-    container_name: plex
+      - VPNSP=${VPNSP}
+      - OPENVPN_USER=${PIA_USERNAME}         # SECRET - stored in Portainer
+      - OPENVPN_PASSWORD=${PIA_PASSWORD}     # SECRET - stored in Portainer
+      - REGION=${REGION}
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
+      - VPN_TYPE=${VPN_TYPE}
+    restart: unless-stopped
+    networks:
+      - mediaplex_default
+    healthcheck:
+      test: ["CMD-SHELL", "/gluetun-entrypoint healthcheck"]
+      interval: 5s
+      timeout: 5s
+      start_period: 10s
+      retries: 1
+
+  deluge: 
+    container_name: ${DELUGE_CONTAINER}
+    depends_on: 
+      - gluetun
+    environment: 
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - DELUGE_LOGLEVEL=${DELUGE_LOGLEVEL}
+    image: lscr.io/linuxserver/deluge
+    network_mode: "container:${GLUETUN_CONTAINER}"
+    restart: unless-stopped
+    volumes: 
+      - ${DOCKERDIR}/mediaserver/deluge:/config
+      - ${USERDIR}/torrents:/downloads
+
+  sabnzbd: 
+    container_name: ${SABNZBD_CONTAINER}
+    environment: 
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    image: lscr.io/linuxserver/sabnzbd
+    ports: 
+      - "${SABNZBD_PORT}:8080"
+    restart: unless-stopped
+    security_opt: 
+      - "no-new-privileges:true"
+    volumes: 
+      - ${DOCKERDIR}/mediaserver/sabnzbd:/config
+      - ${USERDIR}/usenet:/data/usenet
+      - ${DOCKERDIR}/mediaserver/shared:/shared
+    networks:
+      - mediaplex_default
+
+  gotson-komga-1:
+    image: gotson/komga:latest
+    container_name: ${KOMGA_CONTAINER}
+    volumes:
+      - ${DOCKERDIR}/mediaserver/komga:/config
+      - ${USERDIR}/comics:/data
+    ports:
+      - "${KOMGA_PORT}:25600"  # Note: Komga uses port 25600, not 8080
+    user: "${PUID}:${PGID}"
+    environment:
+      - TZ=${TZ}
+    restart: unless-stopped
+    networks:
+      - mediaplex_default
+
+  plex: 
+    container_name: ${PLEX_CONTAINER}
     devices: 
       - "/dev/dri:/dev/dri"
     environment: 
-      ADVERTISE_IP: "http://$SERVER_IP:32400/"
-      HOSTNAME: synPlex
-      PLEX_CLAIM_FILE: $PLEX_CLAIM
-      PLEX_GID: $PGID
-      PLEX_UID: $PUID
-      TZ: $TZ
-    image: "plexinc/pms-docker:latest"
+      - PLEX_UID=${PUID}
+      - PLEX_GID=${PGID}
+      - TZ=${TZ}
+      - ADVERTISE_IP=http://${SERVER_IP}:32400/    # SECRET - stored in Portainer
+      - HOSTNAME=synPlex
+      - PLEX_CLAIM_FILE=${PLEX_CLAIM}              # SECRET - stored in Portainer
+    image: plexinc/pms-docker:latest
     network_mode: host
     restart: unless-stopped
     security_opt: 
       - "no-new-privileges:true"
     volumes: 
-      - "$DOCKERDIR/mediaserver/plexms:/config"
-      - "${USERDIR}/data/media:/media"
-      - "/dev/shm:/transcode"
-  radarr: 
-    container_name: radarr
-    environment: 
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "TZ=${TZ}"
-    image: "linuxserver/radarr:latest"
-    ports: 
-      - "$RADARR_PORT:7878"
-    restart: always
-    security_opt: 
-      - "no-new-privileges:true"
-    volumes: 
-      - "${DOCKERDIR}/mediaserver/radarr:/config"
-      - "${USERDIR}/data:/data"
-      - "/etc/localtime:/etc/localtime:ro"
-      - "${DOCKERDIR}/mediaserver/shared:/shared"
-  sabnzbd: 
-    container_name: sabnzbd
-    environment: 
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "TZ=${TZ}"
-    image: linuxserver/sabnzbd
-    ports: 
-      - "$SABDNZD_PORT:8080"
-    restart: always
-    security_opt: 
-      - "no-new-privileges:true"
-    volumes: 
-      - "${DOCKERDIR}/mediaserver/sabnzbd:/config"
-      - "${USERDIR}/data/usenet:/data/usenet:rw"
-      - "${DOCKERDIR}/mediaserver/shared:/shared"
+      - ${DOCKERDIR}/mediaserver/plexms:/config
+      - ${USERDIR}/media:/media
+      - /dev/shm:/transcode
+
   sonarr: 
-    container_name: sonarr
+    container_name: ${SONARR_CONTAINER}
     environment: 
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "TZ=${TZ}"
-    image: "linuxserver/sonarr:latest"
-    #depends_on: 
-    #  - gluetun
-    #network_mode: "service:gluetun"
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    image: lscr.io/linuxserver/sonarr:latest
     ports: 
       - "${SONARR_PORT}:8989"
-    restart: always
+    restart: unless-stopped
     security_opt: 
       - "no-new-privileges:true"
     volumes: 
-      - "${DOCKERDIR}/mediaserver/sonarr:/config"
-      - "${USERDIR}/data:/data"
-      - "/etc/localtime:/etc/localtime:ro"
-      - "${DOCKERDIR}/mediaserver/shared:/shared"
-  komga:
-    image: gotson/komga
-    container_name: komga
+      - ${DOCKERDIR}/mediaserver/sonarr:/config
+      - ${USERDIR}:/data
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERDIR}/mediaserver/shared:/shared
+    networks:
+      - mediaplex_default
+
+  radarr: 
+    container_name: ${RADARR_CONTAINER}
+    environment: 
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    image: lscr.io/linuxserver/radarr:latest
+    ports: 
+      - "${RADARR_PORT}:7878"
+    restart: unless-stopped
+    security_opt: 
+      - "no-new-privileges:true"
+    volumes: 
+      - ${DOCKERDIR}/mediaserver/radarr:/config
+      - ${USERDIR}:/data
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERDIR}/mediaserver/shared:/shared
+    networks:
+      - mediaplex_default
+
+  prowlarr:
+    image: ghcr.io/linuxserver/prowlarr:develop
+    container_name: ${PROWLARR_CONTAINER}
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - ${DOCKERDIR}/mediaserver/komga:/config
-      - ${USERDIR}/data/comics:/data
+       - ${DOCKERDIR}/mediaserver/prowlarr:/config
     ports:
-      - ${KOMGA_PORT}:8080
-    user: "${PUID}:${PGID}"
-    # remove the whole environment section if you don't need it
-    restart: unless-stopped    
+      - "${PROWLARR_PORT}:9696"
+    restart: unless-stopped
+    networks:
+      - mediaplex_default
+
   xteve: 
-    container_name: xteveGuide2Go
-    #depends_on: 
-    #  - gluetun
-    #network_mode: "service:gluetun"
+    container_name: ${XTEVE_CONTAINER}
     restart: unless-stopped
     environment: 
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "TZ=${TZ}"
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - XTEVE_DEBUG=${XTEVE_DEBUG}
+      - XTEVE_API=${XTEVE_API}
     ports:
       - "${XTEVE_PORT1}:34400"
       - "${XTEVE_PORT2}:1900"
-    image: "dnsforge/xteve:latest"
+    image: dnsforge/xteve:latest
     volumes: 
-      - "${DOCKERDIR}/mediaserver/dnsForgeXteve:/home/xteve/conf"
-      - "${DOCKERDIR}/mediaserver/guide2go:/home/xteve/guide2go/conf"
-volumes:
-  lidarr:
+      - ${DOCKERDIR}/mediaserver/dnsForgeXteve:/home/xteve/conf
+      - ${DOCKERDIR}/mediaserver/guide2go:/home/xteve/guide2go/conf
+    networks:
+      - mediaplex_default
+
+  lazylibrarian:
+    image: lscr.io/linuxserver/lazylibrarian:latest
+    container_name: ${LAZYLIBRARIAN_CONTAINER}
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DOCKERDIR}/mediaserver/lazylibrarian:/config
+      - ${USERDIR}/books:/books
+      - ${USERDIR}/magazines:/magazines
+      - ${USERDIR}/downloads:/downloads  # For download clients
+      - ${DOCKERDIR}/mediaserver/shared:/shared
+    ports:
+      - "${LAZYLIBRARIAN_PORT}:5299"
+    restart: unless-stopped
+    security_opt:
+      - "no-new-privileges:true"
+    networks:
+      - mediaplex_default
